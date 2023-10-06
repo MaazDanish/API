@@ -2,14 +2,13 @@ const bcrypt = require("bcrypt");
 const { createTransport } = require('nodemailer')
 var sib = require("sib-api-v3-sdk");
 const { v4: uuidv4 } = require('uuid')
-const axios = require("axios");
 const fs = require('fs');
 const path = require('path')
 const sequelize = require('../util/database')
 
 //importing models
 const User = require('../model/user');
-const forgotPassword = require('../model/forgotpassword');
+const forgotPassword = require('../model/resetPassword');
 
 
 exports.forgotPasswd = async (req, res, next) => {

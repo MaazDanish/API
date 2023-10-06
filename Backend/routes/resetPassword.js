@@ -1,6 +1,6 @@
 const express = require('express');
 
-const controller = require('../controller/password');
+const controller = require('../controllers/resetPassword');
 
 const route = express.Router();
 
