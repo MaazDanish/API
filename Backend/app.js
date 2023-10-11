@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 
 const User = require('./model/user');
-const connectToMongoDB = require('./util/database');
+const { connectToMongoDB, mongoose } = require('./util/database'); // Adjust the path to your database file
 
 const userRoutes = require('./routes/signRoutes');
 
@@ -14,8 +14,10 @@ app.use(express.json());
 
 app.use('/user', userRoutes);
 
-connectToMongoDB.sync().then(res => {
-    app.listen(4000);
-}).catch(err => {
-    console.log(err);
+connectToMongoDB().then(() => {
+    app.listen(4000, () => {
+        console.log('Server is running on port 4000');
+    });
+}).catch(error => {
+    console.error('Error connecting to MongoDB:', error);
 });

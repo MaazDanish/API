@@ -34,21 +34,27 @@ exports.postSignUp = async (req, res, next) => {
 exports.verifyUser = async (req, res, next) => {
     try {
         const { userEmail, userPassword } = req.body;
-        const user = User.findOne({ email: userEmail });
-        if (user !== null) {
-            const passwordMatch = await bcrypt.compare(userPassword, user.password);
-            if (passwordMatch) {
-                let token = await jwt.sign(user.id, 'secretkey')
-                return res.status(200).json({ success: true, message: 'User login successful', token });
-            } else {
-                return res.status(401).json({ success: false, message: 'One field is incorrect' });
-            }
+
+        const user = await User.findOne({ email: userEmail });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (!user.password) {
+            return res.status(500).json({ success: false, message: 'User password is missing or invalid' });
+        }
+
+        const passwordMatch = await bcrypt.compare(userPassword, user.password);
+
+        if (passwordMatch) {
+            let token = await jwt.sign({ userId: user.id }, 'secretkey');
+            return res.status(200).json({ success: true, message: 'User login successful', token });
         } else {
-            return res.status(404).json({ success: false, message: 'User does not exist with this email' });
+            return res.status(401).json({ success: false, message: 'Email or Password is incorrect' });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: 'Error occured while verifying the user' })
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error occurred while verifying the user' });
     }
-}
-
+};
