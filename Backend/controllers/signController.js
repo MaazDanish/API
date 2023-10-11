@@ -32,18 +32,21 @@ exports.postSignUp = async (req, res, next) => {
 }
 
 exports.verifyUser = async (req, res, next) => {
+    const { userEmail, userPassword } = req.body;
     try {
-        const { userEmail, userPassword } = req.body;
+
+        console.log('User email:', userEmail);
 
         const user = await User.findOne({ email: userEmail });
+
+        console.log('User from database:', user);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        if (!user.password) {
-            return res.status(500).json({ success: false, message: 'User password is missing or invalid' });
-        }
+        console.log('User password from request:', userPassword);
+        console.log('User password from database:', user.password);
 
         const passwordMatch = await bcrypt.compare(userPassword, user.password);
 
