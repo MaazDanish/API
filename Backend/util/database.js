@@ -1,5 +1,15 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
 
-const sequelize = new Sequelize('api', 'root', 'maazdanish', { dialect: 'mysql', host: "localhost" });
+const connectToMongoDB = async () => {
+  try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/API');
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    throw new Error(`Unable to connect to MongoDB: ${error.message}`);
+  }
+};
 
-module.exports = sequelize;
+module.exports = {
+  mongoose,
+  connectToMongoDB,
+};

@@ -6,7 +6,7 @@ const controller = require('../controllers/signController');
 
 
 
-router.post('/signUp', controller.postSignUp);
-router.post('/signIn', controller.verifyUser);
+router.post('/signup', controller.postSignUp);
+router.post('/signin', controller.verifyUser);
 
 module.exports = router;
