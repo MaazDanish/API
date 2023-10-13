@@ -1,18 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization;
+    const token = req.headers.authorization;
 
-    jwt.verify(token,'secretkey',(err,encrypt) => {
-        if(err){
-            res.status(500).json({success:false});
+    jwt.verify(token, 'secretkey', function (err, decoded) {
+        if (err) {
+            console.log(err);
         }
-        req.user = encrypt;
-        // console.log('RED.ID IN AUTH ',req.id);
-        // console.log(typeof(req.id));
-        // console.log(req.id,'ID IN AUTH JS ');
+        req.user = decoded;
         next();
     })
+
 };
 
 module.exports = authenticateToken;
