@@ -17,18 +17,19 @@ exports.postSignUp = async (req, res, next) => {
 
         if (existingUser) {
             res.status(400).json({ error: 'Account already exists. Please Log In' })
-        }
-        const hash = await bcrypt.hash(password, 10);
+        } else {
+            const hash = await bcrypt.hash(password, 10);
 
-        const newUser = await User.create({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            number: number,
-            password: hash
-        });
-        console.log('Successfully posted in db and sign up is done');
-        return res.status(200).json(newUser);
+            const newUser = await User.create({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                number: number,
+                password: hash
+            });
+            console.log('Successfully posted in db and sign up is done');
+            return res.status(200).json(newUser);
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server error' });
@@ -130,8 +131,14 @@ exports.forgotPassword = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found with this email' });
         }
 
+        const API_KEY = process.env.SENDINBLUE_API_KEY;
+        console.log(API_KEY, ' API KEY  --- >>>>>>>>>>');
+        const pass_id = process.env.SENDINBLUE_PASS_ID;
+        console.log(pass_id, ' PASS ID ');
+
+
         const sendinblue = new SibApiV3Sdk.TransactionalEmailsApi();
-        sendinblue.setApiKey(SibApiV3Sdk.ApiKeyAuth.fromValue('YOUR_SENDINBLUE_API_KEY'));
+        sendinblue.setApiKey(SibApiV3Sdk.ApiKeyAuth.fromValue('API_KEY'));
 
 
         // Generate a unique token for password reset
@@ -148,7 +155,7 @@ exports.forgotPassword = async (req, res) => {
 
         const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
             to: [{ email: user.email }],
-            templateId: YOUR_SENDINBLUE_TEMPLATE_ID,
+            templateId: pass_id,
             params: { resetLink: resetLink },
         });
 

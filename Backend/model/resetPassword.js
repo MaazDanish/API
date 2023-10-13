@@ -1,26 +1,24 @@
-const { mongoose, connectToMongoDB } = require('../util/database');
+const mongoose = require('mongoose');
+const User = require('./user');
 
-const userData = new mongoose.Schema({
-    email: {
+const userDataSchema = new mongoose.Schema({
+    uuid: {
         type: String,
-        required: true
+        required: true,
     },
-    password: {
-        type: String,
-        required: true
+    isActive: {
+        type: Boolean,
+        required: true,
+        default: true,
     },
-    resetToken: {
-        type: String,
-        required: true
-    },
-    resetTokenExpiry: {
-        type: Date,
-        required: true
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,  // Assuming userId is an ObjectId
+        ref: 'User',  // Reference to the User model
+        required: true,
     }
-
-
 });
 
-const ResetPassword = mongoose.model('ResetPassword', userData);
+const ForGotPassword = mongoose.model('ForGotPassword', userDataSchema);
 
-module.exports = ResetPassword;
+module.exports = ForGotPassword;
+
