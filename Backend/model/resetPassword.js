@@ -12,8 +12,8 @@ const userDataSchema = new mongoose.Schema({
         default: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,  // Assuming userId is an ObjectId
-        ref: 'User',  // Reference to the User model
+        type: mongoose.Schema.Types.ObjectId,  
+        ref: 'User', 
         required: true,
     }
 });

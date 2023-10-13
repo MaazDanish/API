@@ -16,7 +16,7 @@ exports.postSignUp = async (req, res, next) => {
         const existingUser = await User.findOne({ email: email });
 
         if (existingUser) {
-            res.status(400).json({ error: 'Account already exists. Please Log In' })
+            res.status(400).json({ message: 'Account already exists. Please Log In', success: false })
         } else {
             const hash = await bcrypt.hash(password, 10);
 
@@ -85,7 +85,6 @@ exports.getUserInformation = async (req, res) => {
     }
 };
 
-// editing infromation
 exports.editUser = async (req, res) => {
     try {
 
@@ -113,85 +112,5 @@ exports.editUser = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error updating user' });
-    }
-};
-
-// Forgot password function
-exports.forgotPassword = async (req, res) => {
-    const { userEmail } = req.body;
-
-    try {
-        // Check if the user exists with the provided email
-
-
-
-        const user = await User.findOne({ email: userEmail });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found with this email' });
-        }
-
-        const API_KEY = process.env.SENDINBLUE_API_KEY;
-        console.log(API_KEY, ' API KEY  --- >>>>>>>>>>');
-        const pass_id = process.env.SENDINBLUE_PASS_ID;
-        console.log(pass_id, ' PASS ID ');
-
-
-        const sendinblue = new SibApiV3Sdk.TransactionalEmailsApi();
-        sendinblue.setApiKey(SibApiV3Sdk.ApiKeyAuth.fromValue('API_KEY'));
-
-
-        // Generate a unique token for password reset
-        const resetToken = uuidv4();
-        console.log(resetToken, 'TESTING RESET TOKEN IN 132 -->>>>>>>');
-
-        // Save the reset token and expiration time to the user in the database
-        user.resetToken = resetToken;
-        user.resetTokenExpiry = Date.now() + 3600000; // Set to expire in 1 hour
-        await user.save();
-
-        // Send an email to the user with a link containing the reset token
-        const resetLink = `http://localhost:4000/user/reset-password?token=${resetToken}`;
-
-        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
-            to: [{ email: user.email }],
-            templateId: pass_id,
-            params: { resetLink: resetLink },
-        });
-
-        await sendinblue.sendTransacEmail(sendSmtpEmail);
-
-        res.status(200).json({ success: true, message: 'Password reset email sent successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Error sending password reset email' });
-    }
-};
-// reset password
-
-exports.resetPassword = async (req, res) => {
-    const { resetToken, newPassword } = req.body;
-
-    try {
-        // Find the user with the provided reset token and ensure it's not expired
-        const user = await User.findOne({
-            resetToken: resetToken,
-            resetTokenExpiry: { $gt: Date.now() },
-        });
-
-        if (!user) {
-            return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
-        }
-
-        // Update the user's password and clear the reset token fields
-        user.password = await bcrypt.hash(newPassword, 10);
-        user.resetToken = undefined;
-        user.resetTokenExpiry = undefined;
-        await user.save();
-
-        res.status(200).json({ success: true, message: 'Password reset successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Error resetting password' });
     }
 };

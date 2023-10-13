@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 require('dotenv').config();
-// const { createTransport } = require('nodemailer')
 const nodemailer = require('nodemailer')
 const smtpTransport = require('nodemailer-smtp-transport');
 var sib = require("sib-api-v3-sdk");
@@ -18,7 +17,6 @@ exports.forgotPasswd = async (req, res, next) => {
     const { email } = req.params;
     try {
         const result = await User.findOne({ email });
-        // console.log(result.id, 'TESTING USER ID  in passwod js forgt LINE 17 OF FORGOT PASSWD');
 
         const uuid = uuidv4();
         console.log(uuid, 'uuid testing ->>>>>>>>> in 20 ');
@@ -29,14 +27,11 @@ exports.forgotPasswd = async (req, res, next) => {
                 isActive: true,
                 uuid: uuid,
             }
-            // console.log(obj);
             const forgotResult = await forGotPassword.create(obj);
 
             const defaultClient = sib.ApiClient.instance;
             const apiKey = defaultClient.authentications['api-key'];
             apiKey.apiKey = process.env.API_KEY;
-            console.log(process.env.API_KEY,'API KEY OF BREVO');
-            console.log(process.env.PASS_ID,'PASS ID OF BREVO');
 
             const transporter = nodemailer.createTransport(smtpTransport({
                 host: "smtp-relay.brevo.com",
@@ -89,7 +84,6 @@ exports.resetPassword = (req, res, next) => {
                         const updatedHtml = html.replace('<%= uuidd %>', uuidd);
 
                         res.send(updatedHtml);
-                        //   res.end(updatedHtml)
                     }
                 });
             } else {

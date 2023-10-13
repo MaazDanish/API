@@ -5,7 +5,7 @@ require('dotenv').config();
 const app = express();
 
 const User = require('./model/user');
-const { connectToMongoDB, mongoose } = require('./util/database'); // Adjust the path to your database file
+const { connectToMongoDB } = require('./util/database'); // Adjust the path to your database file
 
 const userRoutes = require('./routes/signRoutes');
 

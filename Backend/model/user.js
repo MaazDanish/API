@@ -1,4 +1,4 @@
-const { mongoose, connectToMongoDB } = require('../util/database');
+const mongoose = require('mongoose');
 
 const userData = new mongoose.Schema({
     firstName: {
@@ -21,7 +21,7 @@ const userData = new mongoose.Schema({
         type: String,
         required: true
     }
-    
+
 });
 
 const User = mongoose.model('User', userData);
