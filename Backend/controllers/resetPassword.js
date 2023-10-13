@@ -37,13 +37,13 @@ exports.forgotPasswd = async (req, res, next) => {
                 host: "smtp-relay.brevo.com",
                 port: 587,
                 auth: {
-                    user: "dk599318@gmail.com",
+                    user: process.env.MAIL_ID,
                     pass: process.env.PASS_ID,
                 },
             }));
 
             const mailOptions = {
-                from: 'dk599318@gmail.com',
+                from: process.env.MAIL_ID,
                 to: req.params.email,
                 subject: `Your subject`,
                 text: `Your reset link is -  http://localhost:4000/user/password/resetpassword/${uuid}       

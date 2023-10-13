@@ -49,11 +49,13 @@ exports.verifyUser = async (req, res, next) => {
         }
 
         const passwordMatch = await bcrypt.compare(userPassword, user.password);
-        console.log(user.id, 'USER ID IN 47 LINE OF VERIFY USER');
+
         const payload = { userId: user._id };
+
         if (passwordMatch) {
-            let token = await jwt.sign(payload, 'secretkey');
-            console.log('Generated Token:', token);
+
+            let token = jwt.sign(payload, process.env.SECRET_KEY);
+            
             return res.status(200).json({ success: true, message: 'User login successful', token: token });
         } else {
             return res.status(401).json({ success: false, message: 'Email or Password is incorrect' });
